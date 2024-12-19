@@ -1,0 +1,14 @@
+POST http://localhost:3001/api/persons
+content-type: application/json
+
+{
+    "name": "Sauli Niinistö",
+    "number": "040-123456"
+}
+
+###
+
+DELETE http://localhost:3001/api/persons/1
+
+
+

@@ -1,5 +1,6 @@
 const express = require('express')
 const morgan = require('morgan')
+const cors = require('cors')
 
 const app = express()
 
@@ -11,6 +12,7 @@ app.use(express.json())
 app.use(
   morgan(':method :url :status :res[content-length] - :response-time ms :body')
 )
+app.use(cors())
 
 let persons = [
   {
@@ -55,7 +57,7 @@ app.post('/api/persons', (request, response) => {
   }
 
   const person = {
-    id: Math.floor(Math.random() * Number.MAX_SAFE_INTEGER - 1) + 1,
+    id: String(Math.floor(Math.random() * (Number.MAX_SAFE_INTEGER - 1))),
     name: body.name,
     number: body.number,
   }
@@ -76,9 +78,15 @@ app.get('/api/persons/:id', (request, response) => {
 })
 
 app.delete('/api/persons/:id', (request, response) => {
+  const person = persons.find((person) => person.id === request.params.id)
+
+  if (!person) {
+    return response.status(404).json({ error: `person does not exist` })
+  }
+
   persons = persons.filter((person) => person.id != request.params.id)
 
-  response.status(204).end()
+  response.status(200).json(person)
 })
 
 app.get('/info', (request, response) => {

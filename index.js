@@ -1,6 +1,8 @@
+require('dotenv').config()
 const express = require('express')
 const morgan = require('morgan')
 const cors = require('cors')
+const Person = require('./models/person')
 
 const app = express()
 
@@ -38,8 +40,10 @@ let persons = [
   },
 ]
 
-app.get('/api/persons', (request, response) => {
-  response.json(persons)
+app.get('/api/persons', (_, response) => {
+  Person.find({}).then((persons) => {
+    response.json(persons)
+  })
 })
 
 app.post('/api/persons', (request, response) => {
@@ -51,31 +55,24 @@ app.post('/api/persons', (request, response) => {
     })
   }
 
-  if (persons.find((person) => person.name === body.name)) {
-    return response.status(400).json({
-      error: 'person with this name already exists',
-    })
-  }
-
-  const person = {
-    id: String(Math.floor(Math.random() * (Number.MAX_SAFE_INTEGER - 1))),
+  const person = new Person({
     name: body.name,
     number: body.number,
-  }
+  })
 
-  persons = persons.concat(person)
-
-  response.json(person)
+  person.save().then((person) => {
+    response.json(person)
+  })
 })
 
 app.get('/api/persons/:id', (request, response) => {
-  const person = persons.find((person) => person.id === request.params.id)
-
-  if (person) {
-    response.json(person)
-  } else {
-    response.status(404).end()
-  }
+  Person.findById(request.params.id).then((person) => {
+    if (person) {
+      response.json(person)
+    } else {
+      response.status(404).end()
+    }
+  })
 })
 
 app.delete('/api/persons/:id', (request, response) => {

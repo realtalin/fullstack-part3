@@ -12,12 +12,12 @@ morgan.token('body', (request) => {
 
 app.use(express.json())
 app.use(
-  morgan(':method :url :status :res[content-length] - :response-time ms :body')
+  morgan(':method :url :status :res[content-length] - :response-time ms :body'),
 )
 app.use(cors())
 app.use(express.static('dist'))
 
-app.get('/api/persons', (_, response) => {
+app.get('/api/persons', (_request, response) => {
   Person.find({}).then((persons) => {
     response.json(persons)
   })
@@ -72,24 +72,24 @@ app.get('/api/persons/:id', (request, response, next) => {
 
 app.delete('/api/persons/:id', (request, response, next) => {
   Person.findByIdAndDelete(request.params.id)
-    .then((_) => {
+    .then(() => {
       response.status(204).end()
     })
     .catch((error) => next(error))
 })
 
-app.get('/info', (_, response) => {
+app.get('/info', (_request, response) => {
   Person.countDocuments({}).then((result) => {
     response.send(
       `
       <p>Phonebook has info for ${result} people</p>
       <p>${new Date()}</p>
-      `
+      `,
     )
   })
 })
 
-const errorHandler = (error, request, response, next) => {
+const errorHandler = (error, _request, response, next) => {
   console.error(error.message)
 
   if (error.name === 'CastError') {

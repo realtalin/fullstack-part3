@@ -76,15 +76,15 @@ app.get('/api/persons/:id', (request, response) => {
 })
 
 app.delete('/api/persons/:id', (request, response) => {
-  const person = persons.find((person) => person.id === request.params.id)
-
-  if (!person) {
-    return response.status(404).json({ error: `person does not exist` })
-  }
-
-  persons = persons.filter((person) => person.id != request.params.id)
-
-  response.status(200).json(person)
+  Person.findByIdAndDelete(request.params.id)
+    .then((result) => {
+      console.log(result)
+      response.status(204).end()
+    })
+    .catch((error) => {
+      console.log(error)
+      response.status(500).end()
+    })
 })
 
 app.get('/info', (request, response) => {

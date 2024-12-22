@@ -2,10 +2,14 @@ POST http://localhost:3001/api/persons
 content-type: application/json
 
 {
-    "name": "Sauli Niinistö",
+    "name": "a",
     "number": "040-123456"
 }
 
+###
+
+
+PUT http:localhost:3001/api/
 ###
 
 DELETE http://localhost:3001/api/persons/67669237e90206c3dda72fe0
